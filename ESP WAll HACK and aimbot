@@ -1,4 +1,4 @@
- local function createHighlight(player)
+local function createHighlight(player)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local highlight = Instance.new("Highlight")
         highlight.Parent = player.Character
