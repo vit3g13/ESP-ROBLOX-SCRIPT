@@ -1,0 +1,79 @@
+local function createHighlight(player)
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local highlight = Instance.new("Highlight")
+        highlight.Parent = player.Character
+        highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red color
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- White outline
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+    end
+end
+
+local function removeHighlights()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character then
+            for _, obj in pairs(player.Character:GetChildren()) do
+                if obj:IsA("Highlight") then
+                    obj:Destroy()
+                end
+            end
+        end
+    end
+end
+
+while true do
+    removeHighlights() -- Clear previous highlights
+    for _, player in pairs(game.Players:GetPlayers()) do
+        createHighlight(player)
+    end
+    wait(1) -- Reset every second
+end
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+local aimAssistEnabled = false
+
+local function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+    
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local playerPosition = player.Character.HumanoidRootPart.Position
+            local screenPoint, onScreen = Camera:WorldToViewportPoint(playerPosition)
+            
+            if onScreen then
+                local mouseLocation = UserInputService:GetMouseLocation()
+                local distance = (Vector2.new(screenPoint.X, screenPoint.Y) - mouseLocation).Magnitude
+                
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    closestPlayer = player
+                end
+            end
+        end
+    end
+    
+    return closestPlayer
+end
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.Q and not gameProcessed then
+        aimAssistEnabled = true
+        while aimAssistEnabled do
+            local target = getClosestPlayer()
+            if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.HumanoidRootPart.Position)
+            end
+            task.wait() -- Keeps updating while Q is held
+        end
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.Q then
+        aimAssistEnabled = false
+    end
+end)
