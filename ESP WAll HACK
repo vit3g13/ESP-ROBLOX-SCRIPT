@@ -28,10 +28,3 @@ while true do
     end
     wait(1) -- Reset every second
 end
-
-local Player = game.Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-
-UserInputService.JumpRequest:Connect(function()
-    Player.Character:FindFirstChildOfClass("Humanoid").Jump = true
-end)
