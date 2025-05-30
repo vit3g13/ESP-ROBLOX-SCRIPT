@@ -1,5 +1,5 @@
-local allowedUsername = "tvojemama14548" -- 👈 Změň na své jméno
-local Players = game:GetService("Players")
+local allowedUsername = "fortnite123ghg8" -- 👈 Změň na své jméno
+local Players = game:GetService("players")
 local LocalPlayer = Players.LocalPlayer
 
 if LocalPlayer.Name ~= allowedUsername then return end
